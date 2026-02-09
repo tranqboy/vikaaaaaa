@@ -133,6 +133,10 @@
     <h2 style="margin-top: 0;">Вхід в адмін-панель</h2>
     <input type="password" id="passwordInput" placeholder="Введіть пароль" />
     <button class="btn btn--primary" onclick="checkPassword()">Увійти</button>
+    <p style="margin: 12px 0 0; font-size: 12px; color: rgba(255,255,255,.65);">
+      Пароль не зберігається у коді. Налаштуйте його в консолі браузера через
+      <code>setAdminPassword('ваш_пароль')</code>.
+    </p>
   </div>
 
   <div id="adminPanel" class="admin" style="display: none;">
@@ -181,12 +185,36 @@
   </div>
 
   <script>
-    const ADMIN_PASSWORD = 'vika2024'; // Зміни пароль!
-    
-    function checkPassword() {
+    const ADMIN_PASSWORD_HASH_KEY = 'admin_password_hash';
+    const ADMIN_AUTH_KEY = 'admin_authenticated';
+
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function setAdminPassword(password) {
+      const hash = await hashPassword(password);
+      localStorage.setItem(ADMIN_PASSWORD_HASH_KEY, hash);
+      alert('Пароль встановлено. Тепер можна входити в адмін-панель.');
+    }
+
+    async function checkPassword() {
       const input = document.getElementById('passwordInput');
-      if (input.value === ADMIN_PASSWORD) {
-        localStorage.setItem('admin_authenticated', 'true');
+      const storedHash = localStorage.getItem(ADMIN_PASSWORD_HASH_KEY);
+
+      if (!storedHash) {
+        alert('Пароль не налаштовано. Відкрийте консоль і виконайте setAdminPassword("ваш_пароль").');
+        input.value = '';
+        return;
+      }
+
+      const inputHash = await hashPassword(input.value);
+      if (inputHash === storedHash) {
+        localStorage.setItem(ADMIN_AUTH_KEY, 'true');
         showAdminPanel();
       } else {
         alert('Невірний пароль!');
@@ -201,7 +229,7 @@
     }
 
     // Перевірка автентифікації
-    if (localStorage.getItem('admin_authenticated') === 'true') {
+    if (localStorage.getItem(ADMIN_AUTH_KEY) === 'true') {
       showAdminPanel();
     }
 
@@ -331,6 +359,8 @@
     document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') checkPassword();
     });
+
+    window.setAdminPassword = setAdminPassword;
 
     // Завантаження даних
     loadAnalytics();

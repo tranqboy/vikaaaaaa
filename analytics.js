@@ -3,7 +3,6 @@
 
 const ANALYTICS_KEY = 'visitor_analytics';
 const WEBHOOK_URL = 'https://webhook.site/fb431e14-5d44-4851-93cd-bb39514455e9'; // Заповни своїм webhook URL (наприклад, з webhook.site)
-const ADMIN_PASSWORD = 'vika2024'; // Пароль для адмін-панелі (зміни!)
 
 // Збір даних про браузер/пристрій
 function collectBrowserData() { 
