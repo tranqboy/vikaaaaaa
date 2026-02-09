@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Невеликий сайт-із-зізнанням: Вікторіє, я тебе люблю."
+    />
+    <title>Вікторіє, я тебе люблю</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marck+Script&family=Manrope:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Перейти до змісту</a>
+
+    <div class="bg" aria-hidden="true">
+      <div class="bg__glow bg__glow--1"></div>
+      <div class="bg__glow bg__glow--2"></div>
+      <div class="bg__glow bg__glow--3"></div>
+      <div class="bg__grain"></div>
+    </div>
+
+    <header class="topbar">
+      <div class="container topbar__inner">
+        <div class="brand" aria-label="Назва сайту">
+          <span class="brand__mark" aria-hidden="true">♥</span>
+          <span class="brand__text">Для Вікторії</span>
+        </div>
+        <nav class="nav" aria-label="Навігація">
+          <a class="nav__link" href="#photos">Фото</a>
+          <a class="nav__link" href="#letter">Лист</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="container hero__inner">
+          <div class="hero__copy">
+            <p class="chip" aria-label="Ніжна примітка">
+              Маленький сайт, велике почуття
+            </p>
+            <h1 class="hero__title">
+              Вікторіє,
+              <span class="hero__titleAccent">я тебе люблю</span>
+            </h1>
+            <p class="hero__subtitle">
+              Дякую, що ти є. Ти робиш мій світ теплішим, світлішим і справжнім.
+            </p>
+
+            <div class="hero__actions">
+              <button class="btn btn--primary" id="surpriseBtn" type="button">
+                Натисни для сюрпризу
+              </button>
+              
+            </div>
+
+            <dl class="mini">
+              <div class="mini__item">
+                <dt class="mini__k">Статус</dt>
+                <dd class="mini__v">Закоханий у Вікторію</dd>
+              </div>
+              <div class="mini__item">
+                <dt class="mini__k">Дата</dt>
+                <dd class="mini__v">
+                  <span id="meetDate" aria-label="Сьогоднішня дата">—</span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="hero__card" aria-label="Картка з зізнанням">
+            <div class="card">
+              <div class="card__badge">
+                <span aria-hidden="true">✨</span>
+                <span>Коротко і щиро</span>
+              </div>
+              <p class="card__quote">
+                “Ти — мій найулюбленіший дім. Я хочу, щоб ти завжди відчувала
+                себе коханою.”
+              </p>
+              <div class="card__sig">
+                <span class="card__line" aria-hidden="true"></span>
+                <span class="card__name">Денис</span>
+              </div>
+              <div class="card__heart" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    
+
+      <section class="section" id="photos">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">Фото, які гріють</h2>
+          </div>
+
+          <div class="gallery" aria-label="Галерея фото">
+            <figure class="photo">
+              <img
+                class="photo__img"
+                src="./photos/vika-1.jpg"
+                alt="Фото 1 з Вікторією"
+                loading="lazy"
+                onerror="this.dataset.missing='1';this.src='./photos/placeholder.svg';"
+              />
+              <figcaption class="photo__cap">Тут може бути наш найкращий кадр</figcaption>
+            </figure>
+            <figure class="photo">
+              <img
+                class="photo__img"
+                src="./photos/vika-2.jpg"
+                alt="Фото 2 з Вікторією"
+                loading="lazy"
+                onerror="this.dataset.missing='1';this.src='./photos/placeholder.svg';"
+              />
+              <figcaption class="photo__cap">І ще один спогад, який хочеться берегти</figcaption>
+            </figure>
+            <figure class="photo">
+              <img
+                class="photo__img"
+                src="./photos/vika-3.jpg"
+                alt="Фото 3 з Вікторією"
+                loading="lazy"
+                onerror="this.dataset.missing='1';this.src='./photos/placeholder.svg';"
+              />
+              <figcaption class="photo__cap">Твої очі — мій спокій</figcaption>
+            </figure>
+            <figure class="photo">
+              <img
+                class="photo__img"
+                src="./photos/vika-4.jpg"
+                alt="Фото 4 з Вікторією"
+                loading="lazy"
+                onerror="this.dataset.missing='1';this.src='./photos/placeholder.svg';"
+              />
+              <figcaption class="photo__cap">Мій улюблений сміх — твій</figcaption>
+            </figure>
+            <figure class="photo">
+              <img
+                class="photo__img"
+                src="./photos/vika-5.jpg"
+                alt="Фото 5 з Вікторією"
+                loading="lazy"
+                onerror="this.dataset.missing='1';this.src='./photos/placeholder.svg';"
+              />
+              <figcaption class="photo__cap">Коли поруч ти — все виходить</figcaption>
+            </figure>
+            <figure class="photo">
+              <img
+                class="photo__img"
+                src="./photos/vika-6.jpg"
+                alt="Фото 6 з Вікторією"
+                loading="lazy"
+                onerror="this.dataset.missing='1';this.src='./photos/placeholder.svg';"
+              />
+              <figcaption class="photo__cap">І ще багато попереду</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="letter">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">Лист для тебе</h2>
+            <p class="section__subtitle">
+              Натисни — і лист “оживе”.
+            </p>
+          </div>
+
+          <div class="letter">
+            <div class="letter__top">
+              <p class="letter__to">Вікторіє,</p>
+              <button class="btn btn--soft" id="typeBtn" type="button">
+                Показати лист
+              </button>
+            </div>
+            <div
+              class="letter__paper"
+              role="region"
+              aria-label="Текст листа"
+              aria-live="polite"
+            >
+              <p class="letter__text" id="letterText"></p>
+            </div>
+            <div class="letter__bottom">
+              <p class="letter__from">З любов’ю — <span id="signatureName">Денис</span></p>
+              <p class="letter__ps" id="psLine">P.S. Ти — моя найкраща подія.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="container footer__inner">
+          <p class="footer__text">
+            Зроблено з любов’ю для Вікторії. <span aria-hidden="true">♥</span>
+          </p>
+          <a class="footer__link" href="#main">Нагору</a>
+        </div>
+      </footer>
+    </main>
+
+    <div id="fxLayer" class="fx" aria-hidden="true"></div>
+    <script src="./analytics.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>

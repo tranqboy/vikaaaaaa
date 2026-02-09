@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Адмін-панель — Аналітика відвідувачів</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <style>
+    .admin {
+      padding: 24px 0;
+      min-height: 100vh;
+    }
+    .admin__header {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(255,255,255,.14);
+    }
+    .admin__title {
+      font-size: 28px;
+      margin: 0 0 8px;
+    }
+    .admin__stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .stat__label {
+      font-size: 12px;
+      color: rgba(255,255,255,.65);
+      margin: 0 0 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .stat__value {
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0;
+      color: var(--pink);
+    }
+    .admin__controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .admin__table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255,255,255,.04);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .admin__table th {
+      padding: 12px;
+      text-align: left;
+      background: rgba(255,255,255,.08);
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: rgba(255,255,255,.85);
+      border-bottom: 1px solid rgba(255,255,255,.14);
+    }
+    .admin__table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+    }
+    .admin__table tr:hover {
+      background: rgba(255,255,255,.06);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255,94,168,.2);
+      color: rgba(255,255,255,.9);
+    }
+    .badge--mobile { background: rgba(166,107,255,.2); }
+    .badge--tablet { background: rgba(255,211,168,.2); }
+    .admin__empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(255,255,255,.65);
+    }
+    .admin__export {
+      margin-top: 20px;
+    }
+    .password-form {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+    }
+    .password-form input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    .password-form button {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <div class="bg__glow bg__glow--1"></div>
+    <div class="bg__glow bg__glow--2"></div>
+    <div class="bg__glow bg__glow--3"></div>
+    <div class="bg__grain"></div>
+  </div>
+
+  <div id="passwordScreen" class="password-form">
+    <h2 style="margin-top: 0;">Вхід в адмін-панель</h2>
+    <input type="password" id="passwordInput" placeholder="Введіть пароль" />
+    <button class="btn btn--primary" onclick="checkPassword()">Увійти</button>
+  </div>
+
+  <div id="adminPanel" class="admin" style="display: none;">
+    <div class="container">
+      <div class="admin__header">
+        <h1 class="admin__title">📊 Аналітика відвідувачів</h1>
+        <p style="margin: 0; color: rgba(255,255,255,.65);">
+          Дані зберігаються локально в браузері. Оновіть сторінку для оновлення статистики.
+        </p>
+      </div>
+
+      <div class="admin__stats" id="stats"></div>
+
+      <div class="admin__controls">
+        <button class="btn btn--primary" onclick="refreshData()">🔄 Оновити</button>
+        <button class="btn btn--ghost" onclick="exportData()">💾 Експорт JSON</button>
+        <button class="btn btn--ghost" onclick="clearData()">🗑️ Очистити дані</button>
+        <a href="index.html" class="btn btn--ghost">← Назад на сайт</a>
+      </div>
+
+      <div style="overflow-x: auto;">
+        <table class="admin__table" id="visitorsTable">
+          <thead>
+            <tr>
+              <th>Час</th>
+              <th>IP</th>
+              <th>Країна/Місто</th>
+              <th>Пристрій</th>
+              <th>Браузер/ОС</th>
+              <th>Екран</th>
+              <th>Мова</th>
+              <th>Referrer</th>
+            </tr>
+          </thead>
+          <tbody id="visitorsBody"></tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" class="admin__empty" style="display: none;">
+        <p>Поки немає даних про відвідувачів.</p>
+        <p style="font-size: 12px; margin-top: 8px;">
+          Дані почнуть збиратися після того, як хтось відвідає головну сторінку.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = 'vika2024'; // Зміни пароль!
+    
+    function checkPassword() {
+      const input = document.getElementById('passwordInput');
+      if (input.value === ADMIN_PASSWORD) {
+        localStorage.setItem('admin_authenticated', 'true');
+        showAdminPanel();
+      } else {
+        alert('Невірний пароль!');
+        input.value = '';
+      }
+    }
+
+    function showAdminPanel() {
+      document.getElementById('passwordScreen').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      refreshData();
+    }
+
+    // Перевірка автентифікації
+    if (localStorage.getItem('admin_authenticated') === 'true') {
+      showAdminPanel();
+    }
+
+    // Завантаження аналітики
+    function loadAnalytics() {
+      if (typeof window.analytics === 'undefined') {
+        // Якщо analytics.js ще не завантажений
+        const script = document.createElement('script');
+        script.src = './analytics.js';
+        script.onload = () => refreshData();
+        document.head.appendChild(script);
+        return;
+      }
+      refreshData();
+    }
+
+    function refreshData() {
+      const visitors = window.analytics?.getVisitorData() || [];
+      const interactions = window.analytics?.getInteractions() || [];
+      
+      // Статистика
+      const stats = {
+        total: visitors.length,
+        uniqueIPs: new Set(visitors.map(v => v.ip)).size,
+        mobile: visitors.filter(v => v.deviceType === 'Mobile').length,
+        desktop: visitors.filter(v => v.deviceType === 'Desktop').length,
+        clicks: interactions.filter(i => i.type === 'click').length,
+      };
+      
+      document.getElementById('stats').innerHTML = `
+        <div class="stat">
+          <p class="stat__label">Всього відвідувачів</p>
+          <p class="stat__value">${stats.total}</p>
+        </div>
+        <div class="stat">
+          <p class="stat__label">Унікальних IP</p>
+          <p class="stat__value">${stats.uniqueIPs}</p>
+        </div>
+        <div class="stat">
+          <p class="stat__label">Мобільних</p>
+          <p class="stat__value">${stats.mobile}</p>
+        </div>
+        <div class="stat">
+          <p class="stat__label">Десктопів</p>
+          <p class="stat__value">${stats.desktop}</p>
+        </div>
+        <div class="stat">
+          <p class="stat__label">Кліків</p>
+          <p class="stat__value">${stats.clicks}</p>
+        </div>
+      `;
+      
+      // Таблиця
+      const tbody = document.getElementById('visitorsBody');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (visitors.length === 0) {
+        tbody.innerHTML = '';
+        document.querySelector('.admin__table').style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      document.querySelector('.admin__table').style.display = 'table';
+      emptyState.style.display = 'none';
+      
+      tbody.innerHTML = visitors.reverse().map(visitor => {
+        const date = new Date(visitor.timestamp);
+        const timeStr = date.toLocaleString('uk-UA', { 
+          day: '2-digit', 
+          month: '2-digit', 
+          year: 'numeric',
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+        
+        const deviceBadge = visitor.deviceType === 'Mobile' 
+          ? '<span class="badge badge--mobile">📱 Mobile</span>'
+          : visitor.deviceType === 'Tablet'
+          ? '<span class="badge badge--tablet">📱 Tablet</span>'
+          : '<span class="badge">💻 Desktop</span>';
+        
+        return `
+          <tr>
+            <td>${timeStr}</td>
+            <td><code>${visitor.ip || 'N/A'}</code></td>
+            <td>${visitor.country || 'Unknown'}${visitor.city ? `, ${visitor.city}` : ''}</td>
+            <td>${deviceBadge}</td>
+            <td>${visitor.browser} / ${visitor.os}</td>
+            <td>${visitor.screenWidth}×${visitor.screenHeight}</td>
+            <td>${visitor.language}</td>
+            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              ${visitor.referrer === 'Direct' ? '<em>Direct</em>' : visitor.referrer}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function exportData() {
+      const visitors = window.analytics?.getVisitorData() || [];
+      const interactions = window.analytics?.getInteractions() || [];
+      const data = {
+        exported: new Date().toISOString(),
+        visitors,
+        interactions,
+      };
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `analytics-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearData() {
+      if (confirm('Ви впевнені? Всі дані будуть видалені!')) {
+        window.analytics?.clearData();
+        refreshData();
+        alert('Дані очищено!');
+      }
+    }
+
+    // Enter для пароля
+    document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkPassword();
+    });
+
+    // Завантаження даних
+    loadAnalytics();
+  </script>
+</body>
+</html>
